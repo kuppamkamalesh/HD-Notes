@@ -17,13 +17,24 @@
 // const app = express();
 
 // // Core middleware
-// app.use(cors({ origin: true, credentials: true }));
 // app.use(express.json());
 // app.use(cookieParser());
 
+// // Allowed origins (local + deployed frontend)
+// const allowedOrigins = [
+//   "http://localhost:5173",
+//   "https://hd-notes-three.vercel.app",
+// ];
+
 // app.use(
 //   cors({
-//     origin: "http://localhost:5173",
+//     origin: (origin, callback) => {
+//       if (!origin || allowedOrigins.includes(origin)) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error("Not allowed by CORS"));
+//       }
+//     },
 //     credentials: true,
 //     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 //     allowedHeaders: ["Content-Type", "Authorization"],
@@ -89,7 +100,10 @@ app.use(
   })
 );
 
-// Health check
+// ✅ Root health check for Render
+app.get("/", (_, res) => res.json({ message: "API is running" }));
+
+// Existing health check
 app.get("/health", (_, res) => res.json({ ok: true }));
 
 // API routes
